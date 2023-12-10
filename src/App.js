@@ -1,25 +1,39 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import TaskList from './TaskList';
+import AddTask from './AddTask';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+
+  const handleTaskAddition = (taskName) => {
+    setTasks([...tasks, { id: tasks.length + 1, name: taskName, completed: false }]);
+  };
+
+  const handleTaskCompletion = (taskId) => {
+    setTasks(tasks.map(task => (task.id === taskId ? { ...task, completed: !task.completed } : task)));
+  };
+
+  const handleTaskRemoval = (taskId) => {
+    const taskToRemove = tasks.find(task => task.id === taskId);
+
+    // Remova apenas tarefas concluídas
+    if (taskToRemove && taskToRemove.completed) {
+      setTasks(tasks.filter(task => task.id !== taskId));
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Gerenciador de Tarefas</h1>
+      <AddTask handleTaskAddition={handleTaskAddition} />
+      <TaskList
+        tasks={tasks}
+        handleTaskCompletion={handleTaskCompletion}
+        handleTaskRemoval={handleTaskRemoval}
+      />
     </div>
   );
-}
+};
 
 export default App;
